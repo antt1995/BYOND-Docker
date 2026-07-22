@@ -24,10 +24,12 @@ RUN curl -o byond.zip "https://byond-builds.dm-lang.org/${BYOND_MAJOR}/${BYOND_M
 # Recreate the exact Pterodactyl container user sandbox
 RUN useradd -d /home/container -m container
 
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 USER container
 ENV USER=container HOME=/home/container
 WORKDIR /home/container
 
 # Wipe out rigid image entrypoints to fix Group ID errors permanently
-ENTRYPOINT []
-CMD ["/bin/bash"]
+ENTRYPOINT ["/entrypoint.sh"]
