@@ -1,9 +1,11 @@
 FROM i386/debian:bookworm-slim
 
-# Install necessary runtime dependencies for BYOND
+# Install necessary build and runtime dependencies for BYOND
 RUN apt-get update && apt-get install -y \
     curl \
     unzip \
+    make \
+    build-essential \
     libstdc++6 \
     && rm -rf /var/lib/apt/lists/*
 
