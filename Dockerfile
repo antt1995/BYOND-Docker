@@ -12,7 +12,7 @@ ENV BYOND_MAJOR=516 \
     BYOND_MINOR=1685
 
 # Download, extract, and globally install BYOND 
-RUN curl -o byond.zip "https://byond.com{BYOND_MAJOR}/${BYOND_MAJOR}.${BYOND_MINOR}_byond_linux.zip" \
+RUN curl -o byond.zip "https://byond-builds.dm-lang.org/{BYOND_MAJOR}/${BYOND_MAJOR}.${BYOND_MINOR}_byond_linux.zip" \
     && unzip byond.zip \
     && cd byond \
     && make install \
