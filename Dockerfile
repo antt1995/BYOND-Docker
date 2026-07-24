@@ -49,7 +49,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /home/byond
 RUN curl "https://byond-builds.dm-lang.org/${BYOND_MAJOR}/${BYOND_MAJOR}.${BYOND_MINOR}_byond_linux.zip" -o byond.zip \
     && unzip byond.zip \
-    && cd BYOND \
+    && cd byond \
     && make install \
     && cd .. \
     && rm -rf byond.zip BYOND
