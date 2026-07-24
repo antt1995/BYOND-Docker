@@ -59,6 +59,7 @@ RUN dpkg --add-architecture i386 && \
         libssl-dev:i386 \
         libssl3:i386 \
         zlib1g:i386 \
+        libcurl4:i386 \
         git && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
