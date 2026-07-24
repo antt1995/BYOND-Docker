@@ -1,7 +1,7 @@
 # ==========================================
 # STAGE 1: Compile rust-g with HTTP features
 # ==========================================
-FROM ubuntu:i386 AS builder
+FROM i386/debian:bookworm-slim AS builder
 
 # Install system dependencies required to compile Rust libraries
 RUN apt-get update && apt-get install -y \
@@ -28,7 +28,7 @@ RUN git clone https://github.com . \
 # ==========================================
 # STAGE 2: Lean Final BYOND Server Runtime
 # ==========================================
-FROM ubuntu:i386
+FROM i386/debian:bookworm-slim
 
 ENV BYOND_MAJOR=516 \
     BYOND_MINOR=1685
