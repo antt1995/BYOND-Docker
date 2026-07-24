@@ -15,8 +15,11 @@ RUN dpkg --add-architecture i386 && \
         gcc-multilib \
         g++-multilib \
         pkg-config \
+        libstdc++6:i386 \
         libssl-dev:i386 \
-        zlib1g-dev:i386 \
+        libssl3:i386 \
+        libcurl4:i386 \
+        zlib1g:i386 \
         ca-certificates && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
