@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     git \
     gcc \
+    gcc-multilib \
     g++ \
     make \
     pkg-config \
@@ -16,7 +17,8 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build
-RUN git clone git@github.com:tgstation/rust-g.git . && cargo build --release --features "http"
+RUN git clone https://github.com/tgstation/rust-g . \
+    && cargo build --release --target i686-unknown-linux-gnu --features "http"
 
 
 # ==========================================
@@ -51,7 +53,7 @@ RUN curl "https://byond-builds.dm-lang.org/${BYOND_MAJOR}/${BYOND_MAJOR}.${BYOND
 
 # CRITICAL STEP: Copy only the freshly built librustg.so from Stage 1 into the server environment
 # (Change '/usr/local/lib/' to wherever your game maps its external library files, if different)
-COPY --from=builder /build/target/release/librustg.so /usr/local/lib/librustg.so
+COPY --from=builder /build/target/i686-unknown-linux-gnu/release/librust_g.so /usr/local/lib/librustg.so
 
 RUN chmod 755 /usr/local/lib/librustg.so
 
