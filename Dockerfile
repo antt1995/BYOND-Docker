@@ -1,48 +1,68 @@
-# ==========================================
-# STAGE 1: Compile rust-g with HTTP features
-# ==========================================
-FROM i386/rust:1-slim-bookworm AS builder
+# ========================================================
+# STAGE 1: Build 32-bit rust-g from source
+# ========================================================
+FROM debian:bookworm-slim AS rust_builder
 
-# Install system dependencies required to compile Rust libraries
-RUN apt-get update && apt-get install -y \
-    curl \
-    git \
-    gcc \
-    gcc-multilib \
-    g++ \
-    make \
-    pkg-config \
-    libssl-dev \
-    zlib1g-dev \
-    && rm -rf /var/lib/apt/lists/*
+ENV DEBIAN_FRONTEND=noninteractive
 
-WORKDIR /build
-RUN git clone https://github.com/tgstation/rust-g . \
-    && cargo build --release --target i686-unknown-linux-gnu --features "http"
+# Install 32-bit cross-compilation packages and build tools
+RUN dpkg --add-architecture i386 && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        curl \
+        git \
+        make \
+        gcc-multilib \
+        g++-multilib \
+        pkg-config \
+        libssl-dev:i386 \
+        zlib1g-dev:i386 \
+        ca-certificates && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install Rust toolchain with the 32-bit Linux target
+RUN curl --proto '=https' --tlsv1.2 -sSf https://rustup.rs | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
+RUN rustup target add i686-unknown-linux-gnu
+
+# Clone and compile the official tgstation rust-g library
+# Note: Pin a specific tag/version here if your codebase requires an older release
+
+RUN git clone --depth 1 https://github.com/tgstation/rust-g /build/rust-g && \
+    cd /build/rust-g && \
+    PKG_CONFIG_ALLOW_CROSS=1 \
+    OPENSSL_DIR=/usr \
+    cargo build --release --target i686-unknown-linux-gnu
 
 
 # ==========================================
 # STAGE 2: Lean Final BYOND Server Runtime
 # ==========================================
-FROM i386/debian:bookworm-slim
+FROM debian:bookworm-slim
 
-ENV BYOND_MAJOR=516 \
-    BYOND_MINOR=1685
-
-ENV LD_LIBRARY_PATH="/home/byond/byond/lib"
+LABEL author="antt1995" maintainer="antt1995"
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Runtime dependencies (includes ssl & zlib for rust-g HTTP functions)
-RUN apt-get update && apt-get install -y \
-    curl \
-    unzip \
-    make \
-    libstdc++6 \
-    zlib1g \
-    libssl3 \
-    && rm -rf /var/lib/apt/lists/*
+RUN dpkg --add-architecture i386 && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        curl \
+        unzip \
+        make \
+        ca-certificates \
+        libstdc++6:i386 \
+        libssl-dev:i386 \
+        libssl3:i386 \
+        zlib1g:i386 \
+        git && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Install BYOND (Kept from your original Dockerfile)
-WORKDIR /home/byond
+# Install BYOND Engine (Version 516.1685)
+ENV BYOND_MAJOR=516 \
+    BYOND_MINOR=1685
 
 RUN curl "https://byond-builds.dm-lang.org/${BYOND_MAJOR}/${BYOND_MAJOR}.${BYOND_MINOR}_byond_linux.zip" -o byond.zip \
     && unzip byond.zip \
@@ -51,21 +71,20 @@ RUN curl "https://byond-builds.dm-lang.org/${BYOND_MAJOR}/${BYOND_MAJOR}.${BYOND
     && cd .. \
     && rm -rf byond.zip byond
 
-# CRITICAL STEP: Copy only the freshly built librustg.so from Stage 1 into the server environment
-# (Change '/usr/local/lib/' to wherever your game maps its external library files, if different)
-COPY --from=builder /build/target/i686-unknown-linux-gnu/release/librust_g.so /usr/local/lib/librustg.so
+# Create globally accessible directory for our pre-baked library
+RUN mkdir -p /opt/tgstation/lib/
 
-RUN chmod 755 /usr/local/lib/librustg.so
+# Copy the compiled 32-bit .so file from the builder stage
+COPY --from=rust_builder /build/rust-g/target/i686-unknown-linux-gnu/release/librust_g.so /opt/tgstation/lib/librust_g.so
+
 
 # Recreate the exact Pterodactyl container user sandbox
 RUN useradd -d /home/container -m container
 
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
 USER container
+
 ENV USER=container HOME=/home/container
 WORKDIR /home/container
 
-# Wipe out rigid image entrypoints to fix Group ID errors permanently
-ENTRYPOINT ["/entrypoint.sh"]
+COPY ./entrypoint.sh /entrypoint.sh
+CMD ["/bin/bash", "/entrypoint.sh"]
