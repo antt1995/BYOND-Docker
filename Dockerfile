@@ -47,7 +47,7 @@ RUN apt-get update && apt-get install -y \
 
 # Install BYOND (Kept from your original Dockerfile)
 WORKDIR /home/byond
-RUN curl "https://byond.com{BYOND_MAJOR}/${BYOND_MAJOR}.${BYOND_MINOR}_byond_linux.zip" -o byond.zip \
+RUN curl "https://byond-builds.dm-lang.org/${BYOND_MAJOR}/${BYOND_MAJOR}.${BYOND_MINOR}_byond_linux.zip" -o byond.zip \
     && unzip byond.zip \
     && cd BYOND \
     && make install \
