@@ -7,12 +7,16 @@ RUN apt-get update && apt-get install -y \
     make \
     build-essential \
     libstdc++6 \
+    zlib1g-dev \
+    libssl-dev \
+    pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
 # Configured directly for BYOND version 516.1685
 ENV BYOND_MAJOR=516 \
     BYOND_MINOR=1685
-
+    
+ENV LD_LIBRARY_PATH="/home/byond/BYOND/lib:${LD_LIBRARY_PATH}"
 # Download, extract, and globally install BYOND 
 RUN curl -o byond.zip "https://byond-builds.dm-lang.org/${BYOND_MAJOR}/${BYOND_MAJOR}.${BYOND_MINOR}_byond_linux.zip" \
     && unzip byond.zip \
@@ -20,6 +24,7 @@ RUN curl -o byond.zip "https://byond-builds.dm-lang.org/${BYOND_MAJOR}/${BYOND_M
     && make install \
     && cd .. \
     && rm -rf byond byond.zip
+
 
 # Recreate the exact Pterodactyl container user sandbox
 RUN useradd -d /home/container -m container
