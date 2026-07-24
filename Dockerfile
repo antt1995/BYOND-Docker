@@ -16,8 +16,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build
-RUN git clone https://github.com . \
-    && cargo build --release --features "http"
+RUN git clone git@github.com:tgstation/rust-g.git . && cargo build --release --features "http"
 
 
 # ==========================================
