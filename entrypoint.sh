@@ -24,9 +24,7 @@ fi
 
 MODIFIED_STARTUP=$(echo -e "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g')
 
-echo "🚀 [Docker] Starting DreamDaemon with command: ${MODIFIED_STARTUP}"
-
-eval "${MODIFIED_STARTUP}"
+eval "echo \"🚀 [Docker] Starting DreamDaemon with command: ${MODIFIED_STARTUP}\"; ${MODIFIED_STARTUP}"
 
 EXIT_CODE=$?
 
