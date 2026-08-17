@@ -64,11 +64,11 @@ RUN dpkg --add-architecture i386 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Install BYOND Engine (Version 516.1686)
-ENV BYOND_MAJOR=516 \
-    BYOND_MINOR=1686
+# Install BYOND Engine
+ENV BYOND_VERSION=516.1686
 
-RUN curl "https://byond-builds.dm-lang.org/${BYOND_MAJOR}/${BYOND_MAJOR}.${BYOND_MINOR}_byond_linux.zip" -o byond.zip \
+RUN BYOND_MAJOR="${BYOND_VERSION%%.*}" \
+    && curl "https://byond-builds.dm-lang.org/${BYOND_MAJOR}/${BYOND_VERSION}_byond_linux.zip" -o byond.zip \
     && unzip byond.zip \
     && cd byond \
     && make install \
