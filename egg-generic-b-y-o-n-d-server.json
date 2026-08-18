@@ -1,55 +1,55 @@
 {
-    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
-    "meta": {
-        "version": "PTDL_v2",
-        "update_url": null
+  "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+  "meta": {
+    "version": "PTDL_v2",
+    "update_url": null
+  },
+  "exported_at": "2026-08-18T13:08:33+01:00",
+  "name": "Generic BYOND Server",
+  "author": "antt1995@antts.uk",
+  "description": "A generic BYOND server egg designed to host any compiled .dmb project using DreamDaemon.",
+  "features": [],
+  "docker_images": {
+    "BYOND Latest": "ghcr.io/antt1995/byond-docker:latest",
+    "BYOND 516.1687": "ghcr.io/antt1995/byond-docker:516.1687",
+    "BYOND 516.1686": "ghcr.io/antt1995/byond-docker:516.1686",
+    "BYOND 516.1685": "ghcr.io/antt1995/byond-docker:516.1685"
+  },
+  "file_denylist": [],
+  "startup": "DreamDaemon {{DMB_FILENAME}}.dmb {{SERVER_PORT}} -trusted -close {{ADDITIONAL_FLAGS}}",
+  "config": {
+    "files": "{}",
+    "startup": "{\r\n    \"done\": \"Welcome BYOND!\"\r\n}",
+    "logs": "{}",
+    "stop": "^C"
+  },
+  "scripts": {
+    "installation": {
+      "script": null,
+      "container": "ghcr.io/pterodactyl/installers:debian",
+      "entrypoint": "bash"
+    }
+  },
+  "variables": [
+    {
+      "name": "DMB Filename",
+      "description": "The exact name of your compiled .dmb file (do NOT include the extension). For example, if your file is 'mygame.dmb', enter 'mygame'.",
+      "env_variable": "DMB_FILENAME",
+      "default_value": "game",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|max:40",
+      "field_type": "text"
     },
-    "exported_at": "2026-08-18T13:08:33+01:00",
-    "name": "Generic BYOND Server",
-    "author": "antt1995@antts.uk",
-    "description": "A generic BYOND server egg designed to host any compiled .dmb project using DreamDaemon.",
-    "features": [],
-    "docker_images": {
-        "BYOND Latest": "ghcr.io\/antt1995\/byond-docker:latest",
-        "BYOND 516.1687": "ghcr.io\/antt1995\/byond-docker:516.1687",
-        "BYOND 516.1686": "ghcr.io\/antt1995\/byond-docker:516.1686",
-        "BYOND 516.1685": "ghcr.io\/antt1995\/byond-docker:516.1685"
-    },
-    "file_denylist": [],
-    "startup": "DreamDaemon {{DMB_FILENAME}}.dmb {{SERVER_PORT}} -trusted -close {{ADDITIONAL_FLAGS}}",
-    "config": {
-        "files": "{}",
-        "startup": "{\r\n    \"done\": \"Welcome BYOND!\"\r\n}",
-        "logs": "{}",
-        "stop": "^C"
-    },
-    "scripts": {
-        "installation": {
-            "script": null,
-            "container": "ghcr.io\/pterodactyl\/installers:debian",
-            "entrypoint": "bash"
-        }
-    },
-    "variables": [
-        {
-            "name": "DMB Filename",
-            "description": "The exact name of your compiled .dmb file (do NOT include the extension). For example, if your file is 'mygame.dmb', enter 'mygame'.",
-            "env_variable": "DMB_FILENAME",
-            "default_value": "game",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "required|string|max:40",
-            "field_type": "text"
-        },
-        {
-            "name": "Additional Flags",
-            "description": "Extra runtime arguments for DreamDaemon (e.g., '-logsafe' or '-public'). Default is empty.",
-            "env_variable": "ADDITIONAL_FLAGS",
-            "default_value": "",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "nullable|string|max:100",
-            "field_type": "text"
-        }
-    ]
+    {
+      "name": "Additional Flags",
+      "description": "Extra runtime arguments for DreamDaemon (e.g., '-logsafe' or '-public'). Default is empty.",
+      "env_variable": "ADDITIONAL_FLAGS",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|max:100",
+      "field_type": "text"
+    }
+  ]
 }
