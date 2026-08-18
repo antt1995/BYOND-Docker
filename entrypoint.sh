@@ -24,9 +24,26 @@ fi
 
 MODIFIED_STARTUP=$(echo -e "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g')
 
-eval "echo \"🚀 [Docker] Starting DreamDaemon with command: ${MODIFIED_STARTUP}\"; ${MODIFIED_STARTUP}"
+echo "🚀 [Docker] Starting DreamDaemon with command: ${MODIFIED_STARTUP}"
 
-EXIT_CODE=$?
+# Run DreamDaemon in the background and trap stop signals to forward them to it.
+# This script is PID 1 in the container, and PID 1 silently drops any signal it
+# hasn't explicitly handled -- without this, Pterodactyl's stop/restart (which
+# sends SIGINT/SIGTERM straight to the container) never reaches DreamDaemon and
+# Wings ends up force-killing the container once its stop timeout expires.
+eval "${MODIFIED_STARTUP} &"
+CHILD_PID=$!
+
+trap 'kill -INT "$CHILD_PID" 2>/dev/null' SIGINT
+trap 'kill -TERM "$CHILD_PID" 2>/dev/null' SIGTERM
+
+# wait returns as soon as a trapped signal fires, even though DreamDaemon is
+# still shutting down -- keep re-waiting until it has actually exited so we
+# don't race ahead and check clean_shutdown.flag before it's been written.
+while kill -0 "$CHILD_PID" 2>/dev/null; do
+    wait "$CHILD_PID"
+    EXIT_CODE=$?
+done
 
 # If the game closed cleanly via our shutdown logic, force a clean 0 exit
 
