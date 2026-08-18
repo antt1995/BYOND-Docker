@@ -1,0 +1,47 @@
+# ============================================================
+# GenericModule.kvp - BYOND Dream Daemon (CubeCoders AMP Generic Module)
+# Mirrors egg-generic-b-y-o-n-d-server.json (Pterodactyl egg).
+# NOTE: unlike the Pterodactyl egg's docker_images dropdown, this single
+# KVP file can only reference one fixed image - no per-version picker.
+#
+# UNVERIFIED AGAINST A LIVE AMP INSTANCE - confirm before production use:
+#   - section header syntax (this file uses comment dividers, not proven
+#     [Application]/[Console]/[Meta] bracket headers or dotted-prefix keys)
+#   - RootDir/WorkingDir semantics when combined with SpecificDockerImage
+#     (left blank rather than guessed)
+#   - whether AdminMethod=STDIO and UpdateSources=[] are valid here or
+#     should be omitted entirely
+# Import into a test AMP instance and confirm it starts DreamDaemon and
+# detects "ready" via AppReadyRegex before treating this as production-ready.
+# ============================================================
+
+# --- Application ---
+DisplayName=BYOND Dream Daemon
+RootDir=
+WorkingDir=
+ExecutableLinux=DreamDaemon
+CommandLineArgs={{DMBFilename}}.dmb {{$Port}} -trusted -close {{AdditionalFlags}}
+AppSettings={"DMBFilename":"game","AdditionalFlags":""}
+EnvironmentVariables={}
+ExitMethod=CtrlC
+ExitString=
+HasWriteableConsole=True
+HasReadableConsole=True
+ApplicationPort1=7777
+AdminMethod=STDIO
+MaxUsers=0
+UpdateSources=[]
+Compatibility=Docker
+
+# --- Console ---
+AppReadyRegex=^.*Welcome BYOND!.*$
+
+# --- Meta ---
+DisplayName=BYOND Dream Daemon
+OS=2
+AppConfigId=552c0527-dd04-4f05-880f-0c5384ea6707
+Author=antt1995
+URL=https://github.com/antt1995/BYOND-Docker
+DisplayImageSource=
+SpecificDockerImage=ghcr.io/antt1995/byond-docker:latest
+ContainerPolicy=Required
