@@ -13,7 +13,8 @@
     "BYOND Latest": "ghcr.io/antt1995/byond-docker:latest",
     "BYOND 516.1687": "ghcr.io/antt1995/byond-docker:516.1687",
     "BYOND 516.1686": "ghcr.io/antt1995/byond-docker:516.1686",
-    "BYOND 516.1685": "ghcr.io/antt1995/byond-docker:516.1685"
+    "BYOND 516.1685": "ghcr.io/antt1995/byond-docker:516.1685",
+    "BYOND 516.1688": "ghcr.io/antt1995/byond-docker:516.1688"
   },
   "file_denylist": [],
   "startup": "DreamDaemon {{DMB_FILENAME}}.dmb {{SERVER_PORT}} -trusted -close {{ADDITIONAL_FLAGS}}",
